@@ -16,7 +16,12 @@ public class TaskService {
 
     public Mono<Task> insert(Task task){
         return Mono.just(task)
+                .map(Task::insert)
                 .flatMap(this::save);
+    }
+
+    public Mono<List<Task>> list() {
+        return Mono.just(taskList);
     }
 
     private Mono<? extends Task> save(Task task) {

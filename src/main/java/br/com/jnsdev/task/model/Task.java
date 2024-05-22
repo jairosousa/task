@@ -21,6 +21,11 @@ public class Task {
         this.priority = builder.priority;
         this.state = builder.state;
     }
+    public Task insert() {
+        return builderFrom(this)
+                .state(TaskState.INSERT)
+                .build();
+    }
 
     public String getTitle() {
         return title;
