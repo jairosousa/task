@@ -1,5 +1,7 @@
 package br.com.jnsdev.task.controller;
 
+import br.com.jnsdev.task.controller.converter.TaskDTOConverter;
+import br.com.jnsdev.task.controller.dto.TaskDTO;
 import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.service.TaskService;
 import org.springframework.web.bind.annotation.*;
@@ -15,18 +17,22 @@ import java.util.List;
 @RequestMapping("/task")
 public class TaskController {
     private final TaskService taskService;
+    private final TaskDTOConverter converter;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, TaskDTOConverter converter) {
         this.taskService = taskService;
+        this.converter = converter;
     }
 
     @GetMapping
-    public Mono<List<Task>> getTask () {
-        return taskService.list();
+    public Mono<List<TaskDTO>> getTask () {
+        return taskService.list()
+                .map(converter::convertList);
     }
 
     @PostMapping
-    public Mono<Task> createTask(@RequestBody Task task) {
-        return taskService.insert(task);
+    public Mono<TaskDTO> createTask(@RequestBody Task task) {
+        return taskService.insert(task)
+                .map(converter::convert);
     }
 }
