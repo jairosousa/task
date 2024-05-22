@@ -1,9 +1,11 @@
 package br.com.jnsdev.task.service;
 
 import br.com.jnsdev.task.model.Task;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,9 +14,9 @@ import java.util.List;
  */
 @Service
 public class TaskService {
-    public static List<Task> taskList;
+    public static List<Task> taskList = new ArrayList<>();
 
-    public Mono<Task> insert(Task task){
+    public Mono<Task> insert(Task task) {
         return Mono.just(task)
                 .map(Task::insert)
                 .flatMap(this::save);
