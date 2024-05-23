@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @Autor Jairo Nascimento
@@ -33,7 +32,7 @@ public class TaskDTOConverter {
                 ).orElse(null);
     }
 
-    public Task converter(String id, String title, String description, int priority, TaskState state) {
+    public Task convert(String id, String title, String description, int priority, TaskState state) {
         return Task.builder()
                 .id(id)
                 .title(title)

@@ -2,7 +2,6 @@ package br.com.jnsdev.task.controller;
 
 import br.com.jnsdev.task.controller.converter.TaskDTOConverter;
 import br.com.jnsdev.task.controller.dto.TaskDTO;
-import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.model.TaskState;
 import br.com.jnsdev.task.service.TaskService;
 import org.springframework.data.domain.Page;
@@ -34,7 +33,7 @@ public class TaskController {
                                  @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize
     ) {
-        return taskService.findPaginated(converter.converter(id, title, description, priority, state), pageNumber, pageSize)
+        return taskService.findPaginated(converter.convert(id, title, description, priority, state), pageNumber, pageSize)
                 .map(converter::convert);
     }
 
