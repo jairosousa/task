@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: task
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      username: root
+      password: example
+      database: task
+      repositories:
+        type: auto

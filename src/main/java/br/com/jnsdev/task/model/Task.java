@@ -1,12 +1,14 @@
 package br.com.jnsdev.task.model;
 
-import br.com.jnsdev.task.service.TaskService;
+import org.springframework.data.annotation.Id;
 
 /**
  * @Autor Jairo Nascimento
  * @Created 22/05/2024 - 15:59
  */
 public class Task {
+    @Id
+    private String id;
     private String title;
     private String description;
     private int priority;
@@ -21,6 +23,7 @@ public class Task {
         this.priority = builder.priority;
         this.state = builder.state;
     }
+
     public Task insert() {
         return builderFrom(this)
                 .state(TaskState.INSERT)
@@ -43,16 +46,11 @@ public class Task {
         return state;
     }
 
-    public Task newTask() {
-        TaskService.taskList.add(this);
-        return this;
-    }
-
-    public static Builder builder(){
+    public static Builder builder() {
         return new Builder();
     }
 
-    public static Builder builderFrom(Task task){
+    public static Builder builderFrom(Task task) {
         return new Builder(task);
     }
 
@@ -61,8 +59,10 @@ public class Task {
         private String description;
         private int priority;
         private TaskState state;
+
         public Builder() {
         }
+
         public Builder(Task task) {
             this.title = task.title;
             this.description = task.description;
