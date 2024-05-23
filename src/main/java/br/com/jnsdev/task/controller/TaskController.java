@@ -3,11 +3,11 @@ package br.com.jnsdev.task.controller;
 import br.com.jnsdev.task.controller.converter.TaskDTOConverter;
 import br.com.jnsdev.task.controller.dto.TaskDTO;
 import br.com.jnsdev.task.model.Task;
+import br.com.jnsdev.task.model.TaskState;
 import br.com.jnsdev.task.service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 /**
  * @Autor Jairo Nascimento
@@ -25,9 +25,16 @@ public class TaskController {
     }
 
     @GetMapping
-    public Mono<List<TaskDTO>> getTask () {
-        return taskService.list()
-                .map(converter::convertList);
+    public Page<TaskDTO> getTask(@RequestParam(required = false) String id,
+                                 @RequestParam(required = false) String title,
+                                 @RequestParam(required = false) String description,
+                                 @RequestParam(required = false, defaultValue = "0") int priority,
+                                 @RequestParam(required = false) TaskState state,
+                                 @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize
+    ) {
+        return taskService.findPaginated(converter.converter(id, title, description, priority, state), pageNumber, pageSize)
+                .map(converter::convert);
     }
 
     @PostMapping

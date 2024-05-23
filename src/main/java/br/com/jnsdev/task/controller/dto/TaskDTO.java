@@ -8,6 +8,7 @@ import br.com.jnsdev.task.model.TaskState;
  * @Created 22/05/2024 - 17:27
  */
 public class TaskDTO {
+    private String id;
     private String title;
     private String description;
     private int priority;
@@ -16,10 +17,19 @@ public class TaskDTO {
     public TaskDTO() {
     }
     public TaskDTO(Task task) {
+        this.setId(task.getId());
         this.setTitle(task.getTitle());
         this.setDescription(task.getDescription());
         this.setPriority(task.getPriority());
         this.setState(task.getState());
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
