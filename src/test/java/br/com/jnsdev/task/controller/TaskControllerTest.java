@@ -9,8 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 /**
  * @Autor Jairo Nascimento
@@ -29,17 +34,41 @@ class TaskControllerTest {
     @Test
     void controller_mustReturnOk_whenSaveSuccessFully() {
 
-        Mockito.when(converter.convert(Mockito.any(Task.class))).thenReturn(new TaskDTO());
-        Mockito.when(service.insert(Mockito.any())).thenReturn(Mono.just(new Task()));
+        when(converter.convert(any(Task.class))).thenReturn(new TaskDTO());
+        when(service.insert(any())).thenReturn(Mono.just(new Task()));
 
         WebTestClient client = WebTestClient.bindToController(controller).build();
 
         client.post()
                 .uri("/task")
-                .bodyValue(new Task())
+                .bodyValue(new TaskDTO())
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(Task.class);
+                .expectBody(TaskDTO.class);
+    }
+
+    @Test
+    void controller_mustReturnOk_whenGetPaginatedSuccessfully() {
+        when(service.findPaginated(any(), anyInt(), anyInt())).thenReturn(Page.empty());
+        WebTestClient client = WebTestClient.bindToController(controller).build();
+
+        client.get()
+                .uri("/task")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(TaskDTO.class);
+    }
+
+    @Test
+    void controller_mustReturnNoContent_whenDeleteSuccessfully() {
+        String taskId = "any-id";
+        when(service.deleteById(taskId)).thenReturn(Mono.empty());
+        WebTestClient client = WebTestClient.bindToController(controller).build();
+
+        client.delete()
+                .uri("/task/" + taskId)
+                .exchange()
+                .expectStatus().isNoContent();
     }
 
 }
