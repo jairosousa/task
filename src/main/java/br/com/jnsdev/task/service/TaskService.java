@@ -1,17 +1,13 @@
 package br.com.jnsdev.task.service;
 
 import br.com.jnsdev.task.model.Task;
-import br.com.jnsdev.task.model.TaskState;
 import br.com.jnsdev.task.repository.TaskCustomRepository;
 import br.com.jnsdev.task.repository.TaskRepository;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Autor Jairo Nascimento
@@ -19,6 +15,7 @@ import java.util.List;
  */
 @Service
 public class TaskService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
 
     private final TaskRepository taskRepository;
     private final TaskCustomRepository customRepository;
@@ -39,10 +36,12 @@ public class TaskService {
     }
 
     public Mono<Void> deleteById(String id) {
-        return Mono.fromRunnable(()-> taskRepository.deleteById(id));
+        return Mono.fromRunnable(() -> taskRepository.deleteById(id));
     }
+
     private Mono<? extends Task> save(Task task) {
         return Mono.just(task)
+                .doOnNext(t -> LOGGER.info("Saved task with title {}", t.getTitle()))
                 .map(taskRepository::save);
     }
 }
