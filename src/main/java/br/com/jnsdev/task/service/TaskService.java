@@ -34,20 +34,15 @@ public class TaskService {
                 .flatMap(this::save);
     }
 
-    public Mono<List<Task>> list() {
-        return Mono.just(taskRepository.findAll());
-    }
-
-    private Mono<? extends Task> save(Task task) {
-        return Mono.just(task)
-                .map(taskRepository::save);
-    }
-
     public Page<Task> findPaginated(Task task, Integer pageNumber, Integer pageSize) {
         return customRepository.findPaginated(task, pageNumber, pageSize);
     }
 
     public Mono<Void> deleteById(String id) {
         return Mono.fromRunnable(()-> taskRepository.deleteById(id));
+    }
+    private Mono<? extends Task> save(Task task) {
+        return Mono.just(task)
+                .map(taskRepository::save);
     }
 }
