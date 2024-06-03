@@ -1,6 +1,7 @@
 package br.com.jnsdev.task.model;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 
 /**
  * @Autor Jairo Nascimento
@@ -22,6 +23,13 @@ public class ErrorResponse {
         return ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(ex.getMessage())
+                .build();
+    }
+
+    public static ErrorResponse invalidArgumentsError(FieldError fieldError) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(fieldError.getDefaultMessage())
                 .build();
     }
 
