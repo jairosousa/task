@@ -25,12 +25,13 @@ public class TaskService {
         this.customRepository = customRepository;
     }
 
-    public Mono<? extends Task> insert(Task task) {
+    public Mono<Task> insert(Task task) {
         return Mono.just(task)
                 .map(Task::insert)
 //                .flatMap(it -> doError()) // Para simular error
                 .flatMap(this::save)
-                .doOnError(error -> LOGGER.error("Error during save task. Title {}", task.getTitle(), error));
+                .doOnError(error -> LOGGER.error("Error during save task. Title {}", task.getTitle(), error))
+                .cast(Task.class);
     }
 
     /**

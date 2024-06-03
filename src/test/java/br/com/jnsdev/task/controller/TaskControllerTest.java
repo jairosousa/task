@@ -1,9 +1,12 @@
 package br.com.jnsdev.task.controller;
 
 import br.com.jnsdev.task.controller.converter.TaskDTOConverter;
+import br.com.jnsdev.task.controller.converter.TaskInsertDTOConverter;
 import br.com.jnsdev.task.controller.dto.TaskDTO;
+import br.com.jnsdev.task.controller.dto.TaskInsertDTO;
 import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.service.TaskService;
+import br.com.jnsdev.task.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,17 +34,21 @@ class TaskControllerTest {
     @Mock
     private TaskDTOConverter converter;
 
+    @Mock
+    private TaskInsertDTOConverter insertDTOConverter;
+
     @Test
     void controller_mustReturnOk_whenSaveSuccessFully() {
+        Task convertedTask = TestUtils.buildValidTask();
 
         when(converter.convert(any(Task.class))).thenReturn(new TaskDTO());
-        when(service.insert(any())).thenReturn(Mono.just(new Task()));
+        when(service.insert(any())).thenReturn(Mono.just(convertedTask));
 
         WebTestClient client = WebTestClient.bindToController(controller).build();
 
         client.post()
                 .uri("/task")
-                .bodyValue(new TaskDTO())
+                .bodyValue(new TaskInsertDTO())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(TaskDTO.class);

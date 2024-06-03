@@ -34,7 +34,7 @@ class TaskServiceTest {
     private TaskCustomRepository customRepository;
 
     @Test
-    void service_mestReturnTask_whenInsertSuccessfully() {
+    void service_mustReturnTask_whenInsertSuccessfully() {
         Task task = TestUtils.buildValidTask();
 
         when(taskRepository.save(any(Task.class))).thenReturn(task);
