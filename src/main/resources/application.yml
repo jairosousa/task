@@ -15,3 +15,8 @@ spring:
 # Validation
   messages:
     basename: validation-messages
+
+# Client
+via:
+  cep:
+    url: https://viacep.com.br/ws
