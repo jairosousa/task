@@ -2,13 +2,14 @@ package br.com.jnsdev.task.repository;
 
 import br.com.jnsdev.task.model.Task;
 import org.springframework.data.domain.*;
-import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
-import static org.springframework.data.domain.Sort.*;
+import static org.springframework.data.domain.Sort.by;
 
 /**
  * @Autor Jairo Nascimento
@@ -16,13 +17,13 @@ import static org.springframework.data.domain.Sort.*;
  */
 @Repository
 public class TaskCustomRepository {
-    private final MongoOperations mongoOperations;
+    private final ReactiveMongoOperations reactiveMongoOperations;
 
-    public TaskCustomRepository(MongoOperations mongoOperations) {
-        this.mongoOperations = mongoOperations;
+    public TaskCustomRepository(ReactiveMongoOperations reactiveMongoOperations) {
+        this.reactiveMongoOperations = reactiveMongoOperations;
     }
 
-    public Page<Task> findPaginated(Task task, Integer page, Integer size) {
+    public Mono<Page<Task>> findPaginated(Task task, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size, by("title").ascending());
 
         ExampleMatcher matcher = ExampleMatcher.matching()
@@ -38,7 +39,9 @@ public class TaskCustomRepository {
             query.addCriteria(Criteria.where("state").is(task.getState()));
         }
 
-        return PageableExecutionUtils.getPage(mongoOperations.find(query, Task.class), pageable,
-                () -> mongoOperations.count(query, Task.class));
+        return reactiveMongoOperations.find(query, Task.class)
+                .collectList()
+                .zipWith(reactiveMongoOperations.count(Query.query(Criteria.byExample(example)), Task.class))
+                .map(tuple -> PageableExecutionUtils.getPage(tuple.getT1(), pageable, tuple::getT2));
     }
 }

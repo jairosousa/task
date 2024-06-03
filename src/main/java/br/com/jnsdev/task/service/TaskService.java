@@ -36,23 +36,23 @@ public class TaskService {
 
     /**
      * Para simular error
+     *
      * @return
      */
 //    public Mono<Task> doError() {
 //        return Mono.error(new RuntimeException("Erro during teste"));
 //    }
-
-    public Page<Task> findPaginated(Task task, Integer pageNumber, Integer pageSize) {
+    public Mono<Page<Task>> findPaginated(Task task, Integer pageNumber, Integer pageSize) {
         return customRepository.findPaginated(task, pageNumber, pageSize);
     }
 
     public Mono<Void> deleteById(String id) {
-        return Mono.fromRunnable(() -> taskRepository.deleteById(id));
+        return taskRepository.deleteById(id);
     }
 
-    private Mono<? extends Task> save(Task task) {
+    private Mono<Task> save(Task task) {
         return Mono.just(task)
                 .doOnNext(t -> LOGGER.info("Saved task with title {}", t.getTitle()))
-                .map(taskRepository::save);
+                .flatMap(taskRepository::save);
     }
 }

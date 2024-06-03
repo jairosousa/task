@@ -32,16 +32,16 @@ public class TaskController {
     }
 
     @GetMapping
-    public Page<TaskDTO> getTask(@RequestParam(required = false) String id,
-                                 @RequestParam(required = false) String title,
-                                 @RequestParam(required = false) String description,
-                                 @RequestParam(required = false, defaultValue = "0") int priority,
-                                 @RequestParam(required = false) TaskState state,
-                                 @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
-                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize
+    public Mono<Page<TaskDTO>> getTask(@RequestParam(required = false) String id,
+                                       @RequestParam(required = false) String title,
+                                       @RequestParam(required = false) String description,
+                                       @RequestParam(required = false, defaultValue = "0") int priority,
+                                       @RequestParam(required = false) TaskState state,
+                                       @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize
     ) {
         return taskService.findPaginated(converter.convert(id, title, description, priority, state), pageNumber, pageSize)
-                .map(converter::convert);
+                .map(it -> it.map(converter::convert));
     }
 
     @PostMapping
