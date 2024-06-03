@@ -11,3 +11,7 @@ spring:
       database: task
       repositories:
         type: auto
+
+# Validation
+  messages:
+    basename: validation-messages
