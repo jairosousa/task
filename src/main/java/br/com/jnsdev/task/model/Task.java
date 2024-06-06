@@ -51,6 +51,13 @@ public class Task {
                 .build();
     }
 
+    public Task done() {
+        return builderFrom(this)
+                .state(TaskState.DONE)
+                .build();
+    }
+
+
     public String getId() {
         return id;
     }
