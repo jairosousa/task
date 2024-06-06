@@ -14,6 +14,8 @@ public class Task {
     private int priority;
     private TaskState state;
 
+    private Address address;
+
     public Task() {
     }
 
@@ -23,6 +25,7 @@ public class Task {
         this.description = builder.description;
         this.priority = builder.priority;
         this.state = builder.state;
+        this.address = builder().address;
     }
 
     public Task insert() {
@@ -34,6 +37,18 @@ public class Task {
     public Task update(Task oldTask) {
         return builderFrom(this)
                 .state(oldTask.getState())
+                .build();
+    }
+
+    public Task updateAddress(Address address) {
+        return Task.builderFrom(this)
+                .address(address)
+                .build();
+    }
+
+    public Task start() {
+        return builderFrom(this)
+                .state(TaskState.DOING)
                 .build();
     }
 
@@ -57,6 +72,10 @@ public class Task {
         return state;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -71,6 +90,7 @@ public class Task {
         private String description;
         private int priority;
         private TaskState state;
+        private Address address;
 
         public Builder() {
         }
@@ -81,6 +101,7 @@ public class Task {
             this.description = task.description;
             this.priority = task.priority;
             this.state = task.state;
+            this.address = task.getAddress();
         }
 
         public Builder id(String id) {
@@ -105,6 +126,11 @@ public class Task {
 
         public Builder state(TaskState state) {
             this.state = state;
+            return this;
+        }
+
+        public Builder address(Address address) {
+            this.address = address;
             return this;
         }
 

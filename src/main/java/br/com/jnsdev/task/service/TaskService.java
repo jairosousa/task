@@ -1,6 +1,7 @@
 package br.com.jnsdev.task.service;
 
 import br.com.jnsdev.task.exception.TaskNotFoundException;
+import br.com.jnsdev.task.model.Address;
 import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.repository.TaskCustomRepository;
 import br.com.jnsdev.task.repository.TaskRepository;
@@ -20,10 +21,12 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskCustomRepository customRepository;
+    private final AddressService addressService;
 
-    public TaskService(TaskRepository taskRepository, TaskCustomRepository customRepository) {
+    public TaskService(TaskRepository taskRepository, TaskCustomRepository customRepository, AddressService addressService) {
         this.taskRepository = taskRepository;
         this.customRepository = customRepository;
+        this.addressService = addressService;
     }
 
     public Mono<Task> insert(Task task) {
@@ -57,6 +60,21 @@ public class TaskService {
 
     public Mono<Void> deleteById(String id) {
         return taskRepository.deleteById(id);
+    }
+
+    public Mono<Task> start(String id, String cep) {
+        return taskRepository.findById(id)
+                .zipWhen(it -> addressService.getAddress(cep))
+                .flatMap(it -> updateAddress(it.getT1(), it.getT2()))
+                .map(Task::start)
+                .flatMap(taskRepository::save)
+                .switchIfEmpty(Mono.error(TaskNotFoundException::new))
+                .doOnError(error -> LOGGER.error("Error on start task. ID {}", id, error));
+    }
+
+    private Mono<Task> updateAddress(Task task, Address address) {
+        return Mono.just(task)
+                .map(it -> it.updateAddress(address));
     }
 
     private Mono<Task> save(Task task) {
