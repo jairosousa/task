@@ -1,10 +1,13 @@
 package br.com.jnsdev.task.configuration;
 
+import io.netty.resolver.DefaultAddressResolverGroup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import reactor.netty.http.client.HttpClient;
 
 /**
  * @Autor Jairo Nascimento
@@ -19,7 +22,9 @@ public class WebClientConfiguration {
     }
 
     private WebClient getWebClient(WebClient.Builder builder, String url) {
-        return WebClient.builder()
+        HttpClient httpClient = HttpClient.create().resolver(DefaultAddressResolverGroup.INSTANCE);
+        return  WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .uriBuilderFactory(new DefaultUriBuilderFactory(url))
                 .build();
     }

@@ -73,4 +73,15 @@ public class Address {
         this.state = state;
     }
 
+    @Override
+    public String toString() {
+        return "Address{" +
+                "zipCode='" + zipCode + '\'' +
+                ", street='" + street + '\'' +
+                ", complement='" + complement + '\'' +
+                ", neighborhood='" + neighborhood + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                '}';
+    }
 }

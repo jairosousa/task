@@ -13,7 +13,6 @@ public class Task {
     private String description;
     private int priority;
     private TaskState state;
-
     private Address address;
 
     public Task() {
@@ -25,7 +24,7 @@ public class Task {
         this.description = builder.description;
         this.priority = builder.priority;
         this.state = builder.state;
-        this.address = builder().address;
+        this.address = builder.address;
     }
 
     public Task insert() {

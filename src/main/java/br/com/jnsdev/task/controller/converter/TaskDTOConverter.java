@@ -28,6 +28,7 @@ public class TaskDTOConverter {
                         .description(source.getDescription())
                         .priority(source.getPriority())
                         .state(source.getState())
+                        .address(source.getAddress())
                         .build()
                 ).orElse(null);
     }

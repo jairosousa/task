@@ -65,6 +65,7 @@ public class TaskService {
     public Mono<Task> start(String id, String cep) {
         return taskRepository.findById(id)
                 .zipWhen(it -> addressService.getAddress(cep))
+                .doOnNext(it -> LOGGER.info("Retornando dados da API do ViaCepClient address: {}", it.getT2()))
                 .flatMap(it -> updateAddress(it.getT1(), it.getT2()))
                 .map(Task::start)
                 .flatMap(taskRepository::save)

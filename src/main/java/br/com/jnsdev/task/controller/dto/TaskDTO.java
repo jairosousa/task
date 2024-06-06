@@ -1,5 +1,6 @@
 package br.com.jnsdev.task.controller.dto;
 
+import br.com.jnsdev.task.model.Address;
 import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.model.TaskState;
 
@@ -13,6 +14,7 @@ public class TaskDTO {
     private String description;
     private int priority;
     private TaskState state;
+    private Address address;
 
     public TaskDTO() {
     }
@@ -22,7 +24,9 @@ public class TaskDTO {
         this.setDescription(task.getDescription());
         this.setPriority(task.getPriority());
         this.setState(task.getState());
+        this.setAddress(task.getAddress());
     }
+
 
     public String getId() {
         return id;
@@ -62,5 +66,13 @@ public class TaskDTO {
 
     public void setState(TaskState state) {
         this.state = state;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

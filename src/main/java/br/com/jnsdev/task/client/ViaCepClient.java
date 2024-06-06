@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * @Autor Jairo Nascimento
  * @Created 03/06/2024 - 17:48
@@ -25,11 +28,13 @@ public class ViaCepClient {
     }
 
     public Mono<Address> getAddress(String cep) {
+
         return client
                 .get()
                 .uri(VIA_CEP_URI, cep)
                 .retrieve()
                 .bodyToMono(Address.class)
+                .doOnNext(address -> LOGGER.info("Retornando dados da API do ViaCep para o CEP {}: {}", cep, address))
                 .onErrorResume(error -> Mono.error(CepNotFoundException::new));
     }
 
