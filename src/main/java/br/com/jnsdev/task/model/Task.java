@@ -63,7 +63,15 @@ public class Task {
     }
 
     public boolean createdIsEmpty() {
-        return  this.created == null;
+        return this.created == null;
+    }
+
+    public boolean isValidaState() {
+        return this.state != null;
+    }
+
+    public boolean isValidaPriority() {
+        return this.priority > 0;
     }
 
     public Task createdNow() {
@@ -159,6 +167,7 @@ public class Task {
             this.address = address;
             return this;
         }
+
         public Builder created(LocalDate created) {
             this.created = created;
             return this;
