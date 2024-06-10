@@ -4,6 +4,8 @@ import br.com.jnsdev.task.model.Address;
 import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.model.TaskState;
 
+import java.time.LocalDate;
+
 /**
  * @Autor Jairo Nascimento
  * @Created 22/05/2024 - 17:27
@@ -15,6 +17,7 @@ public class TaskDTO {
     private int priority;
     private TaskState state;
     private Address address;
+    private LocalDate created;
 
     public TaskDTO() {
     }
@@ -25,6 +28,7 @@ public class TaskDTO {
         this.setPriority(task.getPriority());
         this.setState(task.getState());
         this.setAddress(task.getAddress());
+        this.setCreated(task.getCreated());
     }
 
 
@@ -74,5 +78,13 @@ public class TaskDTO {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public LocalDate getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDate created) {
+        this.created = created;
     }
 }

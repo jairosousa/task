@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -75,6 +76,12 @@ public class TaskController {
     @PostMapping(value = "/start")
     public Mono<TaskDTO> start(@RequestParam String id, @RequestParam String cep) {
         return taskService.start(id, cep)
+                .map(converter::convert);
+    }
+
+    @PostMapping(value = "/refresh/created")
+    public Flux<TaskDTO> refreshCreated() {
+        return taskService.refreshCreated()
                 .map(converter::convert);
     }
 }
