@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -81,10 +82,10 @@ public class TaskService {
     }
 
     public Mono<Task> done(Task task) {
-            return Mono.just(task)
-                    .doOnNext(it-> LOGGER.info("Finishing task. ID: {}", task.getId()))
-                    .map(Task::done)
-                    .flatMap(taskRepository::save);
+        return Mono.just(task)
+                .doOnNext(it -> LOGGER.info("Finishing task. ID: {}", task.getId()))
+                .map(Task::done)
+                .flatMap(taskRepository::save);
     }
 
     public Flux<Task> refreshCreated() {
@@ -92,6 +93,15 @@ public class TaskService {
                 .filter(Task::createdIsEmpty)
                 .map(Task::createdNow)
                 .flatMap(taskRepository::save);
+    }
+
+    public Mono<List<Task>> doneMany(List<String> ids) {
+        return Flux.fromIterable(ids)
+                .flatMap(id -> taskRepository.findById(id)
+                        .map(Task::done)
+                        .flatMap(taskRepository::save)
+                        .doOnNext(it -> LOGGER.info("Done task. ID: {}", it.getId()))
+                ).collectList();
     }
 
     private Mono<Task> updateAddress(Task task, Address address) {

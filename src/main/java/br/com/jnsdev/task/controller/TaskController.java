@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * @Autor Jairo Nascimento
  * @Created 22/05/2024 - 17:00
@@ -83,5 +85,11 @@ public class TaskController {
     public Flux<TaskDTO> refreshCreated() {
         return taskService.refreshCreated()
                 .map(converter::convert);
+    }
+
+    @PostMapping(value = "/done")
+    public Mono<List<TaskDTO>> done(@RequestBody List<String> ids) {
+        return taskService.doneMany(ids)
+                .map(converter::convertList);
     }
 }
