@@ -3,6 +3,7 @@ package br.com.jnsdev.task.controller.dto;
 import br.com.jnsdev.task.model.Address;
 import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.model.TaskState;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
  * @Autor Jairo Nascimento
  * @Created 22/05/2024 - 17:27
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TaskDTO {
     private String id;
     private String title;
