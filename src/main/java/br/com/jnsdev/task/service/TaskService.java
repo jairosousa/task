@@ -6,6 +6,8 @@ import br.com.jnsdev.task.model.Address;
 import br.com.jnsdev.task.model.Task;
 import br.com.jnsdev.task.repository.TaskCustomRepository;
 import br.com.jnsdev.task.repository.TaskRepository;
+import jakarta.annotation.PostConstruct;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,6 +111,24 @@ public class TaskService {
     private Mono<Task> updateAddress(Task task, Address address) {
         return Mono.just(task)
                 .map(it -> it.updateAddress(address));
+    }
+
+    @PostConstruct
+    private void scheduleDoneOlderTask() {
+        Mono.delay(Duration.ofSeconds(5))
+                .doOnNext(it -> LOGGER.info("Starting task monitoring"))
+                .subscribe();
+
+        Flux.interval(Duration.ofSeconds(10))
+                .flatMap(it -> doneOlderTask())
+                .filter(tasks -> tasks > 0)
+                .doOnNext(tasks -> LOGGER.info("{} task(s) completed ofter being active for over 7 days", tasks))
+                .subscribe();
+
+    }
+
+    private Mono<Long> doneOlderTask() {
+        return customRepository.updateStateToDoneForOlderTask(LocalDate.now().minusDays(7));
     }
 
     private Mono<Task> save(Task task) {

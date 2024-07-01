@@ -1,14 +1,19 @@
 package br.com.jnsdev.task.repository;
 
 import br.com.jnsdev.task.model.Task;
+import br.com.jnsdev.task.model.TaskState;
+import com.mongodb.client.result.UpdateResult;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.by;
@@ -20,15 +25,26 @@ import static org.springframework.data.domain.Sort.by;
 @Repository
 public class TaskCustomRepository {
     private final ReactiveMongoOperations reactiveMongoOperations;
+    private final ReactiveMongoTemplate reactiveMongoTemplate;
 
-    public TaskCustomRepository(ReactiveMongoOperations reactiveMongoOperations) {
+    public TaskCustomRepository(ReactiveMongoOperations reactiveMongoOperations, ReactiveMongoTemplate reactiveMongoTemplate) {
         this.reactiveMongoOperations = reactiveMongoOperations;
+        this.reactiveMongoTemplate = reactiveMongoTemplate;
     }
 
     public Mono<Page<Task>> findPaginated(Task task, Integer page, Integer size) {
         return queryExample(task)
                 .zipWith(pageable(page, size))
-                .flatMap(it-> execute(task, it.getT1(), it.getT2()));
+                .flatMap(it -> execute(task, it.getT1(), it.getT2()));
+    }
+
+    public Mono<Long> updateStateToDoneForOlderTask(LocalDate date) {
+        return reactiveMongoOperations.updateMulti(
+                Query.query(Criteria.where("created").lte(date)
+                        .and("state").is(TaskState.DOING)),
+                Update.update("state", TaskState.DONE),
+                Task.class
+        ).map(UpdateResult::getModifiedCount);
     }
 
     private Mono<Page<Task>> execute(Task task, Example<Task> example, Pageable pageable) {
